@@ -15,7 +15,7 @@ Partial Update instead of full page load on user actions, e.g. google maps, gmai
 TypeScript, a superset of JavaScript and ECMAScript
 Web Browser donot understand TS, need to use tsc to convert .ts to .js (tsc mydemo.ts), and then run js code through node (node mydemo.js)
 Define Variables:
-```
+```typescript
 let <variableName>: <type> = <initial value>;
 let found: boolean = true;
 ```
