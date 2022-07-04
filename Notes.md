@@ -1,4 +1,4 @@
-# Installation
+# Tools Installation
 https://github.com/darbyluv2code/fullstack-angular-and-springboot/blob/master/install-angular-tools/mac/install-mac.md
 
 # Definitions
