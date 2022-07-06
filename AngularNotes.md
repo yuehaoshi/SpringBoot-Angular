@@ -1,4 +1,4 @@
-#Angular
+# Angular
 ## Definitions
 Traditional Application:
 Each user action results in a full HTML page load
