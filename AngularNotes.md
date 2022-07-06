@@ -56,3 +56,96 @@ File: src/app/app/component.html
 <span>{{title}} app is running! SUCCESS!</span>
 //This is the content to be shown on browser page
 ```
+File: app.module.ts // This is the main component for bootstraping
+## Creating a new Angular Component
+### Step1: Create a new Project
+```
+ng new sales-project //router-N, CSS
+cd sales-project
+```
+### Step2: Update main template page
+- Remove all of Angular "placeholder" content
+  - Update File: src/app/app.component.html to `<h1>Sales Team</h1>` (just add basic HTML header)
+### Step3: Generate new component
+```
+ng generate component sales-person-list
+```
+here will be four files generated in `sales-person-list` folder inside `app` folder:
+- `sales-person-list.component.ts`: the component class;
+- `sales-person-list.component.html`: the component template HTML;
+- `sales-person-list.component.css`: the component private CSS;
+- `sales-person-list.component.spec.ts`: the unit test specifications;
+One file will be updated:
+- `src/app/app.module.ts`: Adds the component to the main application module
+### Step4: Add new component selector to app template page
+- In `src/app/sales-person-list/sales-person-list.component.ts`, copy `app-sales-person-list` and make a tag in `app.component.html` page (type `<`, command+v, vscode will close the tag automatically)
+### Step5: Generate a SalesPerson class
+- In terminal run `ng generate class sales-person-list/SalesPerson`
+- One file `sales-person.ts` will be generated in `app/sales-person-list`
+- In `sales-person.ts`, add constructor
+File: app/sales-person-list/sales-person.ts
+```typescript
+export class SalesPerson {
+    constructor(public firstName: string,
+                public lastName: string,
+                public email: string,
+                public salesVolume: number) {
+                
+    }
+}
+```
+### Step6: In SalesPersonListComponent, create sample data
+- In `sales-person-list.component.ts`, create an array of objects
+File: sales-person-list.component.ts
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { SalesPerson } from './sales-person';
+
+@Component({
+  selector: 'app-sales-person-list',
+  templateUrl: './sales-person-list.component.html',
+  styleUrls: ['./sales-person-list.component.css']
+})
+export class SalesPersonListComponent implements OnInit {
+  //create an array of objects
+  salesPersonList: SalesPerson[] = [
+    new SalesPerson("A", "B", "ab@email", 100),
+    new SalesPerson("C", "D", "cd@email", 200),
+  ];
+  constructor() { }
+  ngOnInit(): void {
+  }
+}
+```
+### Step7: In sales-person-list template file, build HTML table by looping over data
+- Start server by `ng serve`
+- In `src/app/sales-person-list/sales-person-list.component.html` file, add html table work
+File: sales-person-list.component.html
+```typescript
+<table border="1">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Sales Volume</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let tempSalesPerson of salesPersonList">
+            <td>{{ tempSalesPerson.firstName }}</td>
+            <td>{{ tempSalesPerson.lastName }}</td>
+            <td>{{ tempSalesPerson.email }}</td>
+            <td>{{ tempSalesPerson.salesVolume }}</td>
+        </tr>
+    </tbody>
+</table>
+```
+A table will show up on your page
+## Angular with BootStrap
+Step1. Get links for remote Bootstrap files
+https://getbootstrap.com/
+Step2. Add links to index.html
+Step3. Apply Bootstrap CSS styles in component HTML template
+Step4. Apply Bootstrap CSS styles in component HTML table
+Step5. Update TypeScript component file to reference Bootstrap HTML template
