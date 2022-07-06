@@ -123,3 +123,98 @@ import { customer } from './Customer';
 //Leave off .ts, can use relative directory path
 let myCustomer = new Customer('A', 'B');
 ```
+## Inheritance
+File: shape.ts
+```typescript
+export class Shape {
+    constructor(private _x: number, private _y: number) {
+    }
+    public get x(): number {
+        return this._x;
+    }
+    public set x(value: number) {
+        this._x = value;
+    }
+    public get y(): number {
+        return this._y;
+    }
+    public set y(value: number) {
+        this._y = value;
+    }
+    getInfo(): string {
+        return `x=${this._x}, y=${this._y}`;
+    }
+}
+```
+File: circle.ts
+```typescript
+import {Shape} from './shape';
+export class Circle extends Shape {   
+    constructor(theX: number, theY: number, private _radius: number) {
+        super(theX, theY); //Call superclass constructor
+    }
+    //theX and theY are Regular parameters, _radius is Parameter Property
+    public get radius(): number {
+        return this._radius;
+    }
+    public set radius(value: number) {
+        this._radius = value;
+    }
+    //Override getOnfo Method:
+    getInfo(): string {
+        return super.getInfo() + `, _radius=${this._radius}`;
+    }
+}
+```
+File: ArrayDriver.js
+```typescript
+import { Shape } from './shape';
+import { Circle } from './circle'
+let myShape = new Shape(10, 15);
+let myCircle = new Circle(5, 10, 20);
+//declare array
+let theShapes: Shape[] = [];
+theShapes.push(myShape);
+theShapes.push(myCircle);
+for (let tempShape of theShapes) {
+    console.log(tempShape.getInfo());
+}
+```
+### Abstract Class
+Cannot create instance of abstract class directly, only concrete subclasses
+File: shape.ts
+```typescript
+export abstract class Shape{
+    ...
+    abstract calculateArea(): number; //Abstract method
+}
+let myShape = new Sape; //This is not working
+```
+File: circle.ts
+```typescript
+import {Shape} from './shape';
+export class Circle extends Shape {   
+    ...
+    calculateArea(): number {
+        return Math.PI * Math.pow(this._radius, 2);
+    }
+}
+```
+### Interface
+Interface is a kind of abstract class, everything inside is abstract undefined method, 
+subclass inheritancing this interface have to have all methods defined.
+File: coach.ts
+```typescript
+export interface Coach {
+    getDailyWorkout(): string;
+}
+```
+File: CricketCoach.ts
+```typescript
+import { Coach } from "./coach";
+export class CricketCoach implements Coach {
+    getDailyWorkout(): string {
+        return "Practice!";
+    }
+}
+```
