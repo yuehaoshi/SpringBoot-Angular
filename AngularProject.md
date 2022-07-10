@@ -7,8 +7,14 @@
   - Add [Bootstrap](www.getbootstrap.com) support, copy Bootstrap's CSS
     - In `src/index.html`, add copied Bootstrap CSS link
   - Edit `src/app/app.component.html` by replacing everything to simple html code
+    ```html
+    <div class = "container">
+      <h1 class = "mt-3 mb-3"></h1>
+    </div>
+    ```
   - Test by `ng serve --open`
-3. Create Angular component for product-list
+2. Create Angular component for product-list
+  - `ng generate component components/product-list`
 4. Develop TypeScript class for Product
 5. Create Angular service to call REST APIs
 6. Update Angular component to subscribe to data from Angular service
