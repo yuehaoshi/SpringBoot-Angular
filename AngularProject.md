@@ -1,7 +1,12 @@
 ## Goal
 - Create Angular Front End components
 - Retrieve data from Spring Boot REST APIs
-## Development Process
+## Tips
+- If you need to find out about a CSS style:
+  1. Copy the style name then search in style.css
+  2. copy style name an search in goole
+  3. If style starts with "fa" then most likely Fontawesome
+## Phase1 Development Process
 1. Create Angular project
   - `ng new angular-electroice`, N, CSS
   - Add [Bootstrap](www.getbootstrap.com) support, copy Bootstrap's CSS
@@ -28,5 +33,45 @@
 5. Update Angular component to subscribe to data from Angular service
   - In `product-list.component.ts`, inject our ProductService
 6. Display the data in an HTML page
-  - In `product-list.component.html`, add our own custom code
+  - Create `product-list-table.component.html`, add table code
+  - Change `product-list.component.ts` template Url to `product-list-table.component.html`
+  - `assets` folder is special directory, we can put web assets here: images, JS, CSS, PDFs etc. Can also add sub-directories with any name
 7. Add CrossOrigin support to Spring Boot app
+
+## Phase2 Development Process
+1. Online Shop Template Integration
+    - `npm install bootstrap`
+    - `npm install @fortawesome/fontawesome-free`
+    - Add styles to `angular.json` file. In "styles" part (this is the CSS styles that will be applied globally to Angular project), add:
+      ```
+       "node_modules/bootstrap/dist/css/bootstrap.min.css",
+       "node_modules/@fortawesome/fortawesome/fontawesome-free/css/all.min.css"
+      ```
+    - Update `style.css` and `index.html` with given files
+    - Replace `favicon.ico` with cunstomized icon
+    - By default, Spring Data REST only returns the first page of 20 items, we can change this in `src/app/services/product.service.ts`
+2. Search for products by category
+    - Angular Routing can only update a section of your page, does not reload the entire page
+
+| Name           | Description                                                                                |
+|----------------|--------------------------------------------------------------------------------------------|
+| Router         | Main routing service. Enables navigation between views based on user actions.              |
+| Route          | Maps a URL path to a component.                                                            |
+| RouterOutlet   | Acts as a placeholder. Renders the desired component based on route.                       |
+| RouterLink     | Link to specific routes in your application.                                               |
+| ActivatedRoute | The current active route that loaded the component. Useful for accessing route parameters. |
+
+
+    - Step1: Define Routes
+      - w
+  
+3. Search for products by text box
+
+4. Master / detail view of products
+
+5. Pagination support for products
+
+6. Add products to shopping cart (CRUD)
+
+7. Shopping cart check out
+
