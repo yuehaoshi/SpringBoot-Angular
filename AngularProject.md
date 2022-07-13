@@ -66,11 +66,42 @@
         - When user select the link for the route path, Angular will create a new instance of component
           ```typescript
           const routes: Routes = [
-            {path: 'products', component: ProductListComponent}
+            {path: 'products', component: ProductListComponent}];
             //'products' is the path to match, when path matches, create new instance of component
-          ];
+            //The path has no leading slashes!
           ```
-  
+        - Add route to show products for a given category id
+          ```typescript
+          const routes: Routes = [
+            {path: 'category/:id', component: ProductListComponent},
+            {path: 'products', component: ProductListComponent}];
+            //Category id parameter, the component can read this later and show products for this category
+          ```
+        - Add more routes to handle for other cases...
+          ```typescript
+          const routes: Routes = [
+            {path: 'category/:id', component: ProductListComponent},
+            {path: 'category', component: ProductListComponent},
+            {path: 'products', component: ProductListComponent},
+            {path: '', redirectTo: '/products', pathMatch: 'full'},
+            {path: '**', redirectTo: '/products', pathMatch: 'full'}];
+            //routes 2 and 3 have no category id, internally the component will use default category id
+            //routes 4 and 5 have no path given but redirect to:/products, this is an exception to the rule about "no leading slashes"
+            //'full' means match on this exactly. Default option is prefix, match if path starts with a given value
+            //'**' is the generic wildcard. It will match on anything that didnot match above routes
+            //Order of routes is important. First match wins. We should define our routes starting from most specific to generic.
+          ```
+        - Can add a custom PageNotFoundComponent for 404s
+          ```typescript
+          const routes: Routes = [
+            ...
+            {path: '**', component: PageNotFoundComponent}];
+            //'PageNotFoundComponent' is a custom component created by you, can be given any name and customized view
+            //Route order is important, so be sure to place this last
+            //More info: https://angular.io/guide/router#define-a-wildcard-route
+          ```
+    - Step 2: Configure Router based on our routes
+        - Configure the router in the applicaiton module (`app.module.ts`)
 3. Search for products by text box
 
 4. Master / detail view of products
