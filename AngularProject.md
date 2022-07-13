@@ -39,7 +39,7 @@
 7. Add CrossOrigin support to Spring Boot app
 
 ## Phase2 Development Process
-1. Online Shop Template Integration
+1. Online Shop Template Integration (Section 11)
     - `npm install bootstrap`
     - `npm install @fortawesome/fontawesome-free`
     - Add styles to `angular.json` file. In "styles" part (this is the CSS styles that will be applied globally to Angular project), add:
@@ -50,7 +50,7 @@
     - Update `style.css` and `index.html` with given files
     - Replace `favicon.ico` with cunstomized icon
     - By default, Spring Data REST only returns the first page of 20 items, we can change this in `src/app/services/product.service.ts`
-2. Search for products by category
+2. Search for products by category (Section 12)
     - Angular Routing can only update a section of your page, does not reload the entire page
 
     | Name           | Description                                                                                |
@@ -101,7 +101,49 @@
             //More info: https://angular.io/guide/router#define-a-wildcard-route
           ```
     - Step 2: Configure Router based on our routes
-        - Configure the router in the applicaiton module (`app.module.ts`)
+        - Configure the router in the applicaiton module (File: `app.module.ts`)
+    - Step 3: Define the Router Outlet
+        - Router Outlet acts as a placeholder
+        - It is where the desired component will be rendered (Only updates a section of the page, doesnot reload entire page)
+        - Update `app.component.html` to use Router Outlet (Based on Router configuration, display appropriate component here)
+          ```typescript
+          <!-- MAIN CONTENT -->
+          <router-outlet></router-outlet>
+          
+          const routes: Routes = [
+            {path: 'category/:id', component: ProductListComponent},
+            {path: 'products', component: ProductListComponent}];
+            //Based on the given path, show component 'X' at this given location
+            //Create an instance of ProductListComponent, display products based on category id
+            //When user clicks the link, ProductListComponent will appear in the location of router-outlet
+          ```
+    - Step 4: Set up Router Links to pass category id param
+        - In our HTML page, set up links to our route
+        - Pass category id as a parameter
+        - Based on Routes configuration, use ProductListComponent
+          ```
+          <!-- MENU SIDEBAR -->
+          <li>
+            <a routerLink="/category/1" routerLinkActive="active-link">Books</a>
+          </li>
+          //The param name is id, pass the value of "1" for this parameter
+          //Once user clicks the link, then we can apply a custom CSS style (optional, not required)
+          //e.g., in style.css, add: .active-link {font-weight: bold;}
+          //At this moment we are hard-coding categories. Later we will make this dynamic and read categoty from REST API
+          ```
+    - Step 5: Enhance ProductListComponent to read category id param
+        - Need to read the category id parameter
+          ```
+          currentCategoryId: number;
+          ...
+          this.currentCategoryId = +this.route.snapshot.paramMap.get('id');
+          //"route": use the activated route
+          //"snapshot": state of route at this given moment in time
+          //"paramMap": Map of all the route parameters
+          //"id" Read the id parameter (path:'category/:id')
+          //Parameter value is returned as string, we use the "+" symbol to convert string to number (typescript trick)
+          ```
+    - Step 6: Modify Spring Boot app - REST Repository needs new method
 3. Search for products by text box
 
 4. Master / detail view of products
