@@ -10,7 +10,7 @@
 1. Create Angular project
     - `ng new angular-electroice`, N, CSS
     - Add [Bootstrap](www.getbootstrap.com) support, copy Bootstrap's CSS
-          - In `src/index.html`, add copied Bootstrap CSS link
+        - In `src/index.html`, add copied Bootstrap CSS link
     - Edit `src/app/app.component.html` by replacing everything to simple html code
       ```html
       <div class = "container">
@@ -62,14 +62,14 @@
     | ActivatedRoute | The current active route that loaded the component. Useful for accessing route parameters. |
 
     - Step 1: Define Routes
-          - A route has a path and a reference to a component
-          - When user select the link for the route path, Angular will create a new instance of component
-            ```typescript
-            const routes: Routes = [
-              {path: 'products', component: ProductListComponent}
-              //'products' is the path to match, when path matches, create new instance of component
-            ];
-            ```
+        - A route has a path and a reference to a component
+        - When user select the link for the route path, Angular will create a new instance of component
+          ```typescript
+          const routes: Routes = [
+            {path: 'products', component: ProductListComponent}
+            //'products' is the path to match, when path matches, create new instance of component
+          ];
+          ```
   
 3. Search for products by text box
 
