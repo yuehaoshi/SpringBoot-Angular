@@ -42,138 +42,145 @@
 7. Add CrossOrigin support to Spring Boot app
 
 ## Phase2 Development Process
-1. Online Shop Template Integration (Section 11)
-    - `npm install bootstrap`
-    - `npm install @fortawesome/fontawesome-free`
-    - Add styles to `angular.json` file. In "styles" part (this is the CSS styles that will be applied globally to Angular project), add:
+### Part 1. Online Shop Template Integration (Section 11)
+- `npm install bootstrap`
+- `npm install @fortawesome/fontawesome-free`
+- Add styles to `angular.json` file. In "styles" part (this is the CSS styles that will be applied globally to Angular project), add:
+  ```
+   "node_modules/bootstrap/dist/css/bootstrap.min.css",
+   "node_modules/@fortawesome/fortawesome/fontawesome-free/css/all.min.css"
+  ```
+- Update `style.css` and `index.html` with given files
+- Replace `favicon.ico` with cunstomized icon
+- By default, Spring Data REST only returns the first page of 20 items, we can change this in `src/app/services/product.service.ts`
+  
+### Part 2. Search for products by category (Section 12, Section13 dynamic)
+#### Section 12: Search for Products by Category
+- Angular Routing can only update a section of your page, does not reload the entire page
+
+| Name           | Description                                                                                |
+|----------------|--------------------------------------------------------------------------------------------|
+| Router         | Main routing service. Enables navigation between views based on user actions.              |
+| Route          | Maps a URL path to a component.                                                            |
+| RouterOutlet   | Acts as a placeholder. Renders the desired component based on route.                       |
+| RouterLink     | Link to specific routes in your application.                                               |
+| ActivatedRoute | The current active route that loaded the component. Useful for accessing route parameters. |
+
+- Step 1: Define Routes
+    - A route has a path and a reference to a component
+    - When user select the link for the route path, Angular will create a new instance of component
+      ```typescript
+      const routes: Routes = [
+        {path: 'products', component: ProductListComponent}];
+        //'products' is the path to match, when path matches, create new instance of component
+        //The path has no leading slashes!
       ```
-       "node_modules/bootstrap/dist/css/bootstrap.min.css",
-       "node_modules/@fortawesome/fortawesome/fontawesome-free/css/all.min.css"
+    - Add route to show products for a given category id
+      ```typescript
+      const routes: Routes = [
+        {path: 'category/:id', component: ProductListComponent},
+        {path: 'products', component: ProductListComponent}];
+        //Category id parameter, the component can read this later and show products for this category
       ```
-    - Update `style.css` and `index.html` with given files
-    - Replace `favicon.ico` with cunstomized icon
-    - By default, Spring Data REST only returns the first page of 20 items, we can change this in `src/app/services/product.service.ts`
-2. Search for products by category (Section 12, Section13 dynamic)
-    - Angular Routing can only update a section of your page, does not reload the entire page
+    - Add more routes to handle for other cases...
+      ```typescript
+      const routes: Routes = [
+        {path: 'category/:id', component: ProductListComponent},
+        {path: 'category', component: ProductListComponent},
+        {path: 'products', component: ProductListComponent},
+        {path: '', redirectTo: '/products', pathMatch: 'full'},
+        {path: '**', redirectTo: '/products', pathMatch: 'full'}];
+        //routes 2 and 3 have no category id, internally the component will use default category id
+        //routes 4 and 5 have no path given but redirect to:/products, this is an exception to the rule about "no leading slashes"
+        //'full' means match on this exactly. Default option is prefix, match if path starts with a given value
+        //'**' is the generic wildcard. It will match on anything that didnot match above routes
+        //Order of routes is important. First match wins. We should define our routes starting from most specific to generic.
+      ```
+    - Can add a custom PageNotFoundComponent for 404s
+      ```typescript
+      const routes: Routes = [
+        ...
+        {path: '**', component: PageNotFoundComponent}];
+        //'PageNotFoundComponent' is a custom component created by you, can be given any name and customized view
+        //Route order is important, so be sure to place this last
+        //More info: https://angular.io/guide/router#define-a-wildcard-route
+      ```
+- Step 2: Configure Router based on our routes
+    - Configure the router in the applicaiton module (File: `app.module.ts`)
+- Step 3: Define the Router Outlet
+    - Router Outlet acts as a placeholder
+    - It is where the desired component will be rendered (Only updates a section of the page, doesnot reload entire page)
+    - Update `app.component.html` to use Router Outlet (Based on Router configuration, display appropriate component here)
+      ```typescript
+      <!-- MAIN CONTENT -->
+      <router-outlet></router-outlet>
 
-    | Name           | Description                                                                                |
-    |----------------|--------------------------------------------------------------------------------------------|
-    | Router         | Main routing service. Enables navigation between views based on user actions.              |
-    | Route          | Maps a URL path to a component.                                                            |
-    | RouterOutlet   | Acts as a placeholder. Renders the desired component based on route.                       |
-    | RouterLink     | Link to specific routes in your application.                                               |
-    | ActivatedRoute | The current active route that loaded the component. Useful for accessing route parameters. |
+      const routes: Routes = [
+        {path: 'category/:id', component: ProductListComponent},
+        {path: 'products', component: ProductListComponent}];
+        //Based on the given path, show component 'X' at this given location
+        //Create an instance of ProductListComponent, display products based on category id
+        //When user clicks the link, ProductListComponent will appear in the location of router-outlet
+      ```
+- Step 4: Set up Router Links to pass category id param
+    - In our HTML page, set up links to our route
+    - Pass category id as a parameter
+    - Based on Routes configuration, use ProductListComponent
+      ```
+      <!-- MENU SIDEBAR -->
+      <li>
+        <a routerLink="/category/1" routerLinkActive="active-link">Books</a>
+      </li>
+      //The param name is id, pass the value of "1" for this parameter
+      //Once user clicks the link, then we can apply a custom CSS style (optional, not required)
+      //e.g., in style.css, add: .active-link {font-weight: bold;}
+      //At this moment we are hard-coding categories. Later we will make this dynamic and read categoty from REST API
+      ```
+- Step 5: Enhance ProductListComponent to read category id param
+    - Need to read the category id parameter
+      ```
+      currentCategoryId: number;
+      ...
+      this.currentCategoryId = +this.route.snapshot.paramMap.get('id');
+      //"route": use the activated route
+      //"snapshot": state of route at this given moment in time
+      //"paramMap": Map of all the route parameters
+      //"id" Read the id parameter (path:'category/:id')
+      //Parameter value is returned as string, we use the "+" symbol to convert string to number (typescript trick)
+      ```
+- Step 6: Modify Spring Boot app - REST Repository needs new method
+    - Spring Data REST and Spring Data JPA supports "query methods"
+    - Spring will construct a query based on method naming conventions
+    - Method starting with: findBy, readBy,  queryBy, etc..
+      ```
+      public interface ProductRepository extends JpaRepository<Product, Long> {
+        Page<Product> findByCategoryId(@RequestParam("id") Long id, Pageable pageable);
+      }
+      //"findBy" is a query method, "CategoryId" is match by category id, "id" is use this parameter value
+      //Spring will execute a query like "SELECT * FROM product where category_id=?;"
+      //Page and Pageable provides support for pagination
+      //Page is a sublist of a list of objects, has information such as totalElements, totalPages, currentPosition etc
+      //Pageable represents pagination information, has information such as pageNumber, pageSize, previous, next, etc
+      //The above two objects are created automatically by the Spring Framework
+      ```
+    - Can custome query using @Query annotation. Support for conditionals: and, or, like, sort...
+    - More in: Spring Data Reference Manual
+    - Spring Data REST automatically expose endpoints for query methods. Exposes endpoint: /search/<<>queryMethodName>
+    - For example, the previous code will be at http://localhost:8080/api/products/search/findByCategoryId
+    - To pass data to REST API, the link will be http://localhost:8080/api/products/search/findByCategoryId?id=1
+- Step 7: Update Angular Service to call new URL on Spring Boot app
+#### Section 13: Search for Products by Category
+- Step 1: Modify Spring Boot app - Expose entity ids
+- Step 2: Create a class: ProductCategory
+- Create new component for menu
 
-    - Step 1: Define Routes
-        - A route has a path and a reference to a component
-        - When user select the link for the route path, Angular will create a new instance of component
-          ```typescript
-          const routes: Routes = [
-            {path: 'products', component: ProductListComponent}];
-            //'products' is the path to match, when path matches, create new instance of component
-            //The path has no leading slashes!
-          ```
-        - Add route to show products for a given category id
-          ```typescript
-          const routes: Routes = [
-            {path: 'category/:id', component: ProductListComponent},
-            {path: 'products', component: ProductListComponent}];
-            //Category id parameter, the component can read this later and show products for this category
-          ```
-        - Add more routes to handle for other cases...
-          ```typescript
-          const routes: Routes = [
-            {path: 'category/:id', component: ProductListComponent},
-            {path: 'category', component: ProductListComponent},
-            {path: 'products', component: ProductListComponent},
-            {path: '', redirectTo: '/products', pathMatch: 'full'},
-            {path: '**', redirectTo: '/products', pathMatch: 'full'}];
-            //routes 2 and 3 have no category id, internally the component will use default category id
-            //routes 4 and 5 have no path given but redirect to:/products, this is an exception to the rule about "no leading slashes"
-            //'full' means match on this exactly. Default option is prefix, match if path starts with a given value
-            //'**' is the generic wildcard. It will match on anything that didnot match above routes
-            //Order of routes is important. First match wins. We should define our routes starting from most specific to generic.
-          ```
-        - Can add a custom PageNotFoundComponent for 404s
-          ```typescript
-          const routes: Routes = [
-            ...
-            {path: '**', component: PageNotFoundComponent}];
-            //'PageNotFoundComponent' is a custom component created by you, can be given any name and customized view
-            //Route order is important, so be sure to place this last
-            //More info: https://angular.io/guide/router#define-a-wildcard-route
-          ```
-    - Step 2: Configure Router based on our routes
-        - Configure the router in the applicaiton module (File: `app.module.ts`)
-    - Step 3: Define the Router Outlet
-        - Router Outlet acts as a placeholder
-        - It is where the desired component will be rendered (Only updates a section of the page, doesnot reload entire page)
-        - Update `app.component.html` to use Router Outlet (Based on Router configuration, display appropriate component here)
-          ```typescript
-          <!-- MAIN CONTENT -->
-          <router-outlet></router-outlet>
-          
-          const routes: Routes = [
-            {path: 'category/:id', component: ProductListComponent},
-            {path: 'products', component: ProductListComponent}];
-            //Based on the given path, show component 'X' at this given location
-            //Create an instance of ProductListComponent, display products based on category id
-            //When user clicks the link, ProductListComponent will appear in the location of router-outlet
-          ```
-    - Step 4: Set up Router Links to pass category id param
-        - In our HTML page, set up links to our route
-        - Pass category id as a parameter
-        - Based on Routes configuration, use ProductListComponent
-          ```
-          <!-- MENU SIDEBAR -->
-          <li>
-            <a routerLink="/category/1" routerLinkActive="active-link">Books</a>
-          </li>
-          //The param name is id, pass the value of "1" for this parameter
-          //Once user clicks the link, then we can apply a custom CSS style (optional, not required)
-          //e.g., in style.css, add: .active-link {font-weight: bold;}
-          //At this moment we are hard-coding categories. Later we will make this dynamic and read categoty from REST API
-          ```
-    - Step 5: Enhance ProductListComponent to read category id param
-        - Need to read the category id parameter
-          ```
-          currentCategoryId: number;
-          ...
-          this.currentCategoryId = +this.route.snapshot.paramMap.get('id');
-          //"route": use the activated route
-          //"snapshot": state of route at this given moment in time
-          //"paramMap": Map of all the route parameters
-          //"id" Read the id parameter (path:'category/:id')
-          //Parameter value is returned as string, we use the "+" symbol to convert string to number (typescript trick)
-          ```
-    - Step 6: Modify Spring Boot app - REST Repository needs new method
-        - Spring Data REST and Spring Data JPA supports "query methods"
-        - Spring will construct a query based on method naming conventions
-        - Method starting with: findBy, readBy,  queryBy, etc..
-          ```
-          public interface ProductRepository extends JpaRepository<Product, Long> {
-            Page<Product> findByCategoryId(@RequestParam("id") Long id, Pageable pageable);
-          }
-          //"findBy" is a query method, "CategoryId" is match by category id, "id" is use this parameter value
-          //Spring will execute a query like "SELECT * FROM product where category_id=?;"
-          //Page and Pageable provides support for pagination
-          //Page is a sublist of a list of objects, has information such as totalElements, totalPages, currentPosition etc
-          //Pageable represents pagination information, has information such as pageNumber, pageSize, previous, next, etc
-          //The above two objects are created automatically by the Spring Framework
-          ```
-        - Can custome query using @Query annotation. Support for conditionals: and, or, like, sort...
-        - More in: Spring Data Reference Manual
-        - Spring Data REST automatically expose endpoints for query methods. Exposes endpoint: /search/<<>queryMethodName>
-        - For example, the previous code will be at http://localhost:8080/api/products/search/findByCategoryId
-        - To pass data to REST API, the link will be http://localhost:8080/api/products/search/findByCategoryId?id=1
-    - Step 7: Update Angular Service to call new URL on Spring Boot app
-3. Search for products by text box
+### Part 3. Search for products by text box
+    
+### Part 4. Master / detail view of products
 
-4. Master / detail view of products
+### Part 5. Pagination support for products
 
-5. Pagination support for products
+### Part 6. Add products to shopping cart (CRUD)
 
-6. Add products to shopping cart (CRUD)
-
-7. Shopping cart check out
+### Part 7. Shopping cart check out
 
