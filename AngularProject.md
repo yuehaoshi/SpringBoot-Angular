@@ -172,9 +172,20 @@
 #### Section 13: Search for Products by Category
 - Step 1: Modify Spring Boot app - Expose entity ids
 - Step 2: Create a class: ProductCategory
-- Create new component for menu
+    - `ng generate class common/product-category`
+- Step 3: Create new component for menu
+    - `ng generate component components/product-category-menu`
+- Step 4: Enhance menu component to read data from product service
+- Step 5: Update product service to call URL on Spring Boot app
+- Step 6: In HTML, replace hard-coded links with menu component
 
 ### Part 3. Search for products by text box
+- Step 1: Modify Spring Boot app - Add a new search method
+- Step 2: Create new component for search
+- Step 3: Add new Angular route for searching
+- Step 4: Update SearchComponent to send data to search route
+- Step 5: Enhance ProductListComponent to search for products wth ProductService
+- Step 6: Update ProductService to call URL on Spring Boot app
     
 ### Part 4. Master / detail view of products
 
