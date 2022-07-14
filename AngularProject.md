@@ -6,6 +6,9 @@
   1. Copy the style name then search in style.css
   2. copy style name an search in goole
   3. If style starts with "fa" then most likely Fontawesome
+- Kill a running process in mac (localhost:8080 for example)
+    - `sudo lsof -i :8080` and find the PID
+    - `kill -9 <PID>` replace <PID> to PID found i previous code output
 ## Phase1 Development Process
 1. Create Angular project
     - `ng new angular-electroice`, N, CSS
@@ -50,7 +53,7 @@
     - Update `style.css` and `index.html` with given files
     - Replace `favicon.ico` with cunstomized icon
     - By default, Spring Data REST only returns the first page of 20 items, we can change this in `src/app/services/product.service.ts`
-2. Search for products by category (Section 12)
+2. Search for products by category (Section 12, Section13 dynamic)
     - Angular Routing can only update a section of your page, does not reload the entire page
 
     | Name           | Description                                                                                |
@@ -144,6 +147,26 @@
           //Parameter value is returned as string, we use the "+" symbol to convert string to number (typescript trick)
           ```
     - Step 6: Modify Spring Boot app - REST Repository needs new method
+        - Spring Data REST and Spring Data JPA supports "query methods"
+        - Spring will construct a query based on method naming conventions
+        - Method starting with: findBy, readBy,  queryBy, etc..
+          ```
+          public interface ProductRepository extends JpaRepository<Product, Long> {
+            Page<Product> findByCategoryId(@RequestParam("id") Long id, Pageable pageable);
+          }
+          //"findBy" is a query method, "CategoryId" is match by category id, "id" is use this parameter value
+          //Spring will execute a query like "SELECT * FROM product where category_id=?;"
+          //Page and Pageable provides support for pagination
+          //Page is a sublist of a list of objects, has information such as totalElements, totalPages, currentPosition etc
+          //Pageable represents pagination information, has information such as pageNumber, pageSize, previous, next, etc
+          //The above two objects are created automatically by the Spring Framework
+          ```
+        - Can custome query using @Query annotation. Support for conditionals: and, or, like, sort...
+        - More in: Spring Data Reference Manual
+        - Spring Data REST automatically expose endpoints for query methods. Exposes endpoint: /search/<<>queryMethodName>
+        - For example, the previous code will be at http://localhost:8080/api/products/search/findByCategoryId
+        - To pass data to REST API, the link will be http://localhost:8080/api/products/search/findByCategoryId?id=1
+    - Step 7: Update Angular Service to call new URL on Spring Boot app
 3. Search for products by text box
 
 4. Master / detail view of products
