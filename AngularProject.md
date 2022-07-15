@@ -182,15 +182,22 @@
 ### Part 3. Search for products by text box
 - Step 1: Modify Spring Boot app - Add a new search method
 - Step 2: Create new component for search
+    - `ng generate component components/search`
 - Step 3: Add new Angular route for searching
+    - Whenever we need to add router we open up our editor file `app.module.ts`
 - Step 4: Update SearchComponent to send data to search route
 - Step 5: Enhance ProductListComponent to search for products wth ProductService
 - Step 6: Update ProductService to call URL on Spring Boot app
     
 ### Part 4. Master / detail view of products
-
+- Step 1: Create new component for product details
+  `ng generate component components/ProductDetails`
+- Step 2: Add new Angular route for product details
+- Step 3: Add router links to product-list-grid HTML page
 ### Part 5. Pagination support for products
-
+  - Pagination shows the users a small subset of data: "page" of data
+  - We need pagination support on both back-end Spring Boot and front-end: Angular
+  - Spring Data REST provides pagination support
 ### Part 6. Add products to shopping cart (CRUD)
 
 ### Part 7. Shopping cart check out
