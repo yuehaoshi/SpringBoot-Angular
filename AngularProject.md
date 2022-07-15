@@ -198,6 +198,9 @@
   - Pagination shows the users a small subset of data: "page" of data
   - We need pagination support on both back-end Spring Boot and front-end: Angular
   - Spring Data REST provides pagination support
+  - Install ng-bootstrap
+      - `ng add @angular/localize`, Dependency for Angular 9+
+      - `npm install @ng-bootstrap/ng-bootstrap`, Install ng-bootstrap (or `ng add @ng-bootstrap/ng-bootstrap@next` if not supported)
 ### Part 6. Add products to shopping cart (CRUD)
 
 ### Part 7. Shopping cart check out
