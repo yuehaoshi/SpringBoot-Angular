@@ -202,6 +202,20 @@
       - `ng add @angular/localize`, Dependency for Angular 9+
       - `npm install @ng-bootstrap/ng-bootstrap`, Install ng-bootstrap (or `ng add @ng-bootstrap/ng-bootstrap@next` if not supported)
 ### Part 6. Add products to shopping cart (CRUD)
-
+  - `ng generate component components/cart-status`
+  - `ng generate class common/cart-item`
+  - `ng generate service services/cart`
+  - `ng generate component components/cart-details` (Section 18)
 ### Part 7. Shopping cart check out
+  - Angular support forms with data-binding, validation and processing. Two types of forms in Angular are:
+      - Reactive forms: programmatic API, scaleable solution for large complex forms, can be reused and tested easily
+      - Ttemplate-driven forms: Target for small, simple forms, not a scalable solution for large complex forms
+  - `ng generate component components/checkout` (Section 19/149)
+  - `ng generate service services/ElectroiceForm` (Section 20/158)
+  - `ng generate class common/Country` (Section 20/170)
+  - `ng generate class common/State` (Section 20/170)
+  - Angular has a set of build-in validation rules
+  - `ng generate class validators/ElectroiceValidators` (Section 21/183)
+  - `ng generate class common/Customer` (Section 24/211) also for Order, OrderItem, Address, Purchase
+  - `ng generate service services/checkout ` (Section 24/212)
 
